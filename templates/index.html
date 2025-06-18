@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>字符编码转换器</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 120px; }
+    .char-box {
+      margin: 5px; text-align: center;
+      padding: 10px; border-radius: 6px;
+      min-width: 50px; font-size: 16px;
+    }
+    .char-box:hover {
+      outline: 2px solid #555;
+    }
+    .char-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>字符编码转换器</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+  <label> 上传 txt 文件：</label><br>
+  <input type="file" name="file"><br>
+
+  <label>原文文件编码：</label>
+  <select name="source_encoding">
+    {% for enc in ['auto', 'utf-8', 'utf-16', 'gbk', 'ascii'] %}
+    <option value="{{ enc }}" {% if source_encoding == enc %}selected{% endif %}>{{ enc }}</option>
+    {% endfor %}
+  </select><br>
+
+  {% if opened_filename %}
+    <small>已打开文件: <b>{{ opened_filename }}</b></small><br>
+  {% endif %}
+
+  <br><label>手动输入原文：</label><br>
+  <textarea name="text">{{ original_text }}</textarea><br><br>
+
+  <label>选择目标编码格式：</label>
+  <select name="encoding">
+    {% for enc in ['utf-8', 'utf-16', 'gbk', 'ascii'] %}
+    <option value="{{ enc }}" {% if selected_encoding == enc %}selected{% endif %}>{{ enc }}</option>
+    {% endfor %}
+  </select><br><br>
+
+  <button type="submit" name="show">显示编码对照</button>
+  <button type="submit" name="save">保存为十六进制编码文件</button>
+</form>
+
+{% if result_table %}
+<h3>字符编码展示（{{ selected_encoding }}）</h3>
+<div class="char-row">
+  {% set colors = ['#e6f7ff', '#fff7e6', '#f9f0ff', '#f6ffed', '#fff1f0', '#e8f5e9'] %}
+  {% for item in result_table %}
+    <div class="char-box" style="background-color: {{ colors[loop.index0 % colors|length] }};">
+      <div style="font-size: 20px;" title="{{ item.unicode }}">{{ item.char }}</div>
+      <div style="font-family: monospace; font-size: 14px; color: #555;">
+        {{ item[selected_encoding] }}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+<p><a href="/convert_encoding">👉 点击这里打开“文件编码转换器”</a></p>
+</body>
+</html>
