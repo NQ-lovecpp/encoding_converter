@@ -8,8 +8,8 @@ WORKDIR /vue-build
 COPY frontend-vue/package*.json ./
 COPY frontend-vue/ ./
 
-# 安装依赖并构建Vue项目
-RUN npm ci --only=production && \
+# 安装依赖并构建Vue项目（包含开发依赖，因为构建工具在devDependencies中）
+RUN npm ci && \
     npm run build
 
 # 使用Python 3.11官方镜像作为基础镜像
