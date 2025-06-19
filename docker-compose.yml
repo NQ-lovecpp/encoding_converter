@@ -7,7 +7,9 @@ services:
       dockerfile: Dockerfile
     container_name: encoding-converter-pro
     ports:
-      - "5000:5000"
+      - "15000:15000"  # API服务
+      - "15001:15001"  # Vue应用
+      - "15002:15002"  # 原版HTML
     environment:
       - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
@@ -15,18 +17,26 @@ services:
       # 开发模式下可以挂载代码目录
       # - ./backend:/app/backend
       # - ./frontend:/app/frontend
+      # - ./frontend-vue:/app/frontend-vue
       - app_data:/app/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:15000/api/health && curl -f http://localhost:15001/ && curl -f http://localhost:15002/"]
       interval: 30s
-      timeout: 10s
+      timeout: 15s
       retries: 3
-      start_period: 40s
+      start_period: 60s
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.encoding-converter.rule=Host(`encoding.localhost`)"
-      - "traefik.http.services.encoding-converter.loadbalancer.server.port=5000"
+      # API服务
+      - "traefik.http.routers.encoding-api.rule=Host(`api.encoding.localhost`)"
+      - "traefik.http.services.encoding-api.loadbalancer.server.port=15000"
+      # Vue应用
+      - "traefik.http.routers.encoding-vue.rule=Host(`vue.encoding.localhost`)"
+      - "traefik.http.services.encoding-vue.loadbalancer.server.port=15001"
+      # 原版HTML
+      - "traefik.http.routers.encoding-html.rule=Host(`html.encoding.localhost`)"
+      - "traefik.http.services.encoding-html.loadbalancer.server.port=15002"
     networks:
       - encoding-network
 

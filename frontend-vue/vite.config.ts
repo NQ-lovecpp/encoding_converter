@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
   base: './',
+  assetsInclude: ['**/*.glb', '**/*.png', '**/*.jpg', '**/*.jpeg'],
   server: {
     port: 3000,
     open: true,
@@ -19,16 +20,11 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html')
-      }
-    }
+    sourcemap: true
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
+      '@': path.resolve(__dirname, 'src')
     }
   }
 }) 

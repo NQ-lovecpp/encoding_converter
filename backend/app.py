@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify, render_template, send_from_directory, send_file
 from flask_cors import CORS
 import chardet
 import base64
@@ -9,15 +9,32 @@ import unicodedata
 import json
 import os
 from pathlib import Path
+import threading
+import time
 
-# 创建Flask应用
-app = Flask(__name__, 
-           template_folder='../frontend',
-           static_folder='../frontend',
-           static_url_path='')
+# 创建三个Flask应用
+# API服务器 (端口15000)
+api_app = Flask(__name__, 
+                template_folder='../frontend',
+                static_folder='../frontend',
+                static_url_path='')
+
+# Vue应用服务器 (端口15001)
+vue_app = Flask(__name__,
+                template_folder='../frontend-vue/dist',
+                static_folder='../frontend-vue/dist',
+                static_url_path='')
+
+# 原版HTML应用服务器 (端口15002)
+html_app = Flask(__name__,
+                 template_folder='../frontend',
+                 static_folder='../frontend',
+                 static_url_path='')
 
 # 配置CORS
-CORS(app)
+CORS(api_app)
+CORS(vue_app)
+CORS(html_app)
 
 # 支持的编码格式
 SUPPORTED_ENCODINGS = [
@@ -31,13 +48,13 @@ SUPPORTED_ENCODINGS = [
 ]
 
 # 路由：主页
-@app.route('/')
+@api_app.route('/')
 def index():
     """返回主页"""
     return render_template('index.html')
 
 # 路由：静态文件
-@app.route('/<path:filename>')
+@api_app.route('/<path:filename>')
 def static_files(filename):
     """提供静态文件"""
     if filename.endswith(('.css', '.js', '.png', '.jpg', '.ico', '.svg')):
@@ -45,7 +62,7 @@ def static_files(filename):
     return render_template('index.html')
 
 # API路由：获取支持的编码列表
-@app.route('/api/encodings', methods=['GET'])
+@api_app.route('/api/encodings', methods=['GET'])
 def get_encodings():
     """获取支持的编码格式列表"""
     try:
@@ -91,7 +108,7 @@ def get_encoding_description(encoding):
     return descriptions.get(encoding, f'{encoding.upper()} 编码')
 
 # API路由：文本编码转换
-@app.route('/api/convert', methods=['POST'])
+@api_app.route('/api/convert', methods=['POST'])
 def convert_text():
     """转换文本编码"""
     try:
@@ -191,7 +208,7 @@ def perform_encoding_conversion(text, target_encodings):
     return results
 
 # API路由：编码检测
-@app.route('/api/detect', methods=['POST'])
+@api_app.route('/api/detect', methods=['POST'])
 def detect_encoding():
     """检测文本编码"""
     try:
@@ -223,7 +240,7 @@ def detect_encoding():
         }), 500
 
 # API路由：文件上传
-@app.route('/api/upload', methods=['POST'])
+@api_app.route('/api/upload', methods=['POST'])
 def upload_file():
     """处理文件上传"""
     try:
@@ -276,7 +293,7 @@ def upload_file():
         }), 500
 
 # API路由：健康检查
-@app.route('/api/health', methods=['GET'])
+@api_app.route('/api/health', methods=['GET'])
 def health_check():
     """健康检查端点"""
     return jsonify({
@@ -287,12 +304,12 @@ def health_check():
     })
 
 # 错误处理
-@app.errorhandler(404)
+@api_app.errorhandler(404)
 def not_found(error):
     """404错误处理"""
     return render_template('index.html')
 
-@app.errorhandler(500)
+@api_app.errorhandler(500)
 def internal_error(error):
     """500错误处理"""
     return jsonify({
@@ -300,22 +317,116 @@ def internal_error(error):
         'error': 'Internal server error'
     }), 500
 
-def main():
-    """主函数"""
-    print("🚀 启动字符编码转换器 Pro")
-    print("=" * 50)
-    print("📡 Flask服务器启动中...")
-    print("🌐 网页版: http://localhost:5000")
-    print("🔧 API文档: http://localhost:5000/api/health")
-    print("=" * 50)
-    
-    # 在调试模式下运行
-    app.run(
+# ========================================
+# Vue应用路由 (端口15001)
+# ========================================
+
+@vue_app.route('/')
+def vue_index():
+    """Vue应用主页"""
+    return send_file('../frontend-vue/dist/index.html')
+
+@vue_app.route('/<path:filename>')
+def vue_static_files(filename):
+    """Vue应用静态文件"""
+    return send_from_directory('../frontend-vue/dist', filename)
+
+@vue_app.errorhandler(404)
+def vue_not_found(error):
+    """Vue应用404错误处理 - SPA路由"""
+    return send_file('../frontend-vue/dist/index.html')
+
+# ========================================
+# 原版HTML应用路由 (端口15002)
+# ========================================
+
+@html_app.route('/')
+def html_index():
+    """原版HTML应用主页"""
+    return render_template('index.html')
+
+@html_app.route('/<path:filename>')
+def html_static_files(filename):
+    """原版HTML应用静态文件"""
+    if filename.endswith(('.css', '.js', '.png', '.jpg', '.ico', '.svg')):
+        return send_from_directory('../frontend', filename)
+    return render_template('index.html')
+
+@html_app.errorhandler(404)
+def html_not_found(error):
+    """原版HTML应用404错误处理"""
+    return render_template('index.html')
+
+def run_api_server():
+    """启动API服务器"""
+    print("🔧 API服务器启动中... (端口15000)")
+    api_app.run(
         host='0.0.0.0',
-        port=5000,
-        debug=True,
+        port=15000,
+        debug=False,
         threaded=True
     )
+
+def run_vue_server():
+    """启动Vue应用服务器"""
+    print("⚡ Vue应用服务器启动中... (端口15001)")
+    vue_app.run(
+        host='0.0.0.0',
+        port=15001,
+        debug=False,
+        threaded=True
+    )
+
+def run_html_server():
+    """启动原版HTML应用服务器"""
+    print("🌐 原版HTML应用服务器启动中... (端口15002)")
+    html_app.run(
+        host='0.0.0.0',
+        port=15002,
+        debug=False,
+        threaded=True
+    )
+
+def main():
+    """主函数"""
+    print("🚀 启动字符编码转换器 Pro - 多服务模式")
+    print("=" * 60)
+    print("📡 正在启动多个服务器...")
+    print("🔧 API服务:      http://localhost:15000")
+    print("⚡ Vue应用:     http://localhost:15001")
+    print("🌐 原版HTML:    http://localhost:15002")
+    print("=" * 60)
+    print("💡 Docker容器端口映射:")
+    print("   - API服务:    容器15000 -> 宿主机15000")
+    print("   - Vue应用:   容器15001 -> 宿主机15001")
+    print("   - 原版HTML:  容器15002 -> 宿主机15002")
+    print("=" * 60)
+    
+    # 创建线程启动各个服务器
+    api_thread = threading.Thread(target=run_api_server, daemon=True)
+    vue_thread = threading.Thread(target=run_vue_server, daemon=True)
+    html_thread = threading.Thread(target=run_html_server, daemon=True)
+    
+    # 启动所有服务器
+    api_thread.start()
+    time.sleep(1)  # 错开启动时间
+    vue_thread.start()
+    time.sleep(1)
+    html_thread.start()
+    
+    print("✅ 所有服务器启动完成!")
+    print("🔍 访问以下地址体验不同版本:")
+    print("   - API + 原版HTML: http://localhost:15000")
+    print("   - Vue现代化界面: http://localhost:15001")
+    print("   - 纯原版HTML:   http://localhost:15002")
+    
+    try:
+        # 保持主线程运行
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\n🛑 正在关闭所有服务器...")
+        print("👋 再见!")
 
 if __name__ == '__main__':
     main() 

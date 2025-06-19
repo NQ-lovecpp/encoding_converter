@@ -72,8 +72,28 @@ tests/
 .env.local
 .env.dev
 
-# Node.js相关（如果有）
-node_modules/
+# Vue开发文件（构建时会重新生成）
+frontend-vue/node_modules/
+frontend-vue/.vite/
+frontend-vue/.env*
+frontend-vue/src/
+frontend-vue/*.md
+frontend-vue/*.json
+frontend-vue/*.ts
+frontend-vue/*.js
+frontend-vue/*.bat
+!frontend-vue/package.json
+!frontend-vue/package-lock.json
+
+# 其他Node.js相关
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log* 
+yarn-error.log*
+
+# 保存的文件
+saved/
+
+# 启动脚本（容器内不需要）
+start.sh
+start.bat
+start-multi-server.py 

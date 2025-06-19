@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar" :class="{ 'navbar-hidden': isNavHidden, 'navbar-visible': !isNavHidden }">
     <div class="nav-content">
       <div class="logo">
         <i :class="`fas ${currentIcon} logo-icon`"></i>
@@ -20,7 +20,10 @@
       </ul>
       
       <div class="nav-actions">
-        <button class="theme-toggle" @click="toggleTheme">
+        <button class="glass-cursor-toggle" @click="toggleGlassCursor" :title="glassCursorEnabled ? '关闭液体玻璃光标' : '开启液体玻璃光标'">
+          <i class="fas fa-mouse-pointer"></i>
+        </button>
+        <button class="theme-toggle" @click="toggleTheme" title="切换主题">
           <i class="fas fa-palette"></i>
         </button>
         <button class="mobile-menu-toggle" @click="toggleMobileMenu">
@@ -32,13 +35,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useThemeStore } from '@/store/theme'
 
 const route = useRoute()
 const themeStore = useThemeStore()
 const showMobileMenu = ref(false)
+const isNavHidden = ref(false)
+
+// 从父组件注入光标状态
+const glassCursorEnabled = inject('glassCursorEnabled', ref(false))
+const toggleGlassCursor = inject('toggleGlassCursor', () => {})
+
+let lastScrollY = 0
 
 // 导航链接配置
 const navLinks = [
@@ -55,6 +65,26 @@ const currentIcon = computed(() => {
   return current ? current.icon.replace('fas fa-', '') : 'code'
 })
 
+// 滚动处理
+const handleScroll = () => {
+  const currentScrollY = window.scrollY
+  
+  if (currentScrollY > 100) { // 滚动超过100px才开始隐藏/显示
+    if (currentScrollY > lastScrollY && currentScrollY > 200) {
+      // 向下滚动且超过200px，隐藏导航栏
+      isNavHidden.value = true
+    } else if (currentScrollY < lastScrollY) {
+      // 向上滚动，显示导航栏
+      isNavHidden.value = false
+    }
+  } else {
+    // 在顶部附近，总是显示
+    isNavHidden.value = false
+  }
+  
+  lastScrollY = currentScrollY
+}
+
 // 方法
 function toggleTheme() {
   themeStore.toggleTheme()
@@ -67,6 +97,14 @@ function toggleMobileMenu() {
 function closeMobileMenu() {
   showMobileMenu.value = false
 }
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -80,6 +118,16 @@ function closeMobileMenu() {
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(100, 116, 139, 0.2);
   padding: 0.75rem 0;
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
+}
+
+.navbar-visible {
+  transform: translateY(0);
 }
 
 .nav-content {
@@ -191,7 +239,8 @@ function closeMobileMenu() {
 }
 
 .theme-toggle,
-.mobile-menu-toggle {
+.mobile-menu-toggle,
+.glass-cursor-toggle {
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.8);
@@ -202,9 +251,19 @@ function closeMobileMenu() {
 }
 
 .theme-toggle:hover,
-.mobile-menu-toggle:hover {
+.mobile-menu-toggle:hover,
+.glass-cursor-toggle:hover {
   color: #40ffaa;
   background: rgba(64, 255, 170, 0.1);
+}
+
+.glass-cursor-toggle {
+  position: relative;
+}
+
+.glass-cursor-toggle.active {
+  color: #40ffaa;
+  background: rgba(64, 255, 170, 0.15);
 }
 
 .mobile-menu-toggle {
@@ -258,6 +317,10 @@ function closeMobileMenu() {
     color: #40ffaa;
     filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
   }
+  
+  .navbar {
+    transition: none;
+  }
 }
 
 /* 暗色主题 */
@@ -270,7 +333,8 @@ function closeMobileMenu() {
 }
 
 .dark-theme .theme-toggle,
-.dark-theme .mobile-menu-toggle {
+.dark-theme .mobile-menu-toggle,
+.dark-theme .glass-cursor-toggle {
   color: rgba(255, 255, 255, 0.9);
 }
 </style> 
