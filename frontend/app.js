@@ -199,13 +199,19 @@ async function convertText() {
             })
         });
 
-        appState.conversionResults = response;
-        appState.saveToHistory(appState.currentText, response);
-        
-        updateUI();
-        showNotification('转换完成', 'success');
+        // 检查响应是否成功
+        if (response.success) {
+            appState.conversionResults = response.results;
+            appState.saveToHistory(appState.currentText, response.results);
+            
+            updateUI();
+            showNotification('转换完成', 'success');
+        } else {
+            throw new Error(response.error || '转换失败');
+        }
         
     } catch (error) {
+        console.error('Convert error:', error);
         showNotification('转换失败: ' + error.message, 'error');
     } finally {
         showLoading(false);
@@ -230,8 +236,14 @@ async function detectFileEncoding(file) {
 
 async function loadEncodings() {
     try {
-        const encodings = await fetchAPI('/encodings');
-        populateEncodingSelector(encodings);
+        const response = await fetchAPI('/encodings');
+        // 检查响应是否成功
+        if (response.success && response.encodings) {
+            const encodingNames = response.encodings.map(enc => enc.name);
+            populateEncodingSelector(encodingNames);
+        } else {
+            throw new Error(response.error || '获取编码列表失败');
+        }
     } catch (error) {
         console.error('Failed to load encodings:', error);
         // 使用默认编码
@@ -248,23 +260,33 @@ function updateUI() {
 }
 
 function updateStats() {
-    if (!appState.conversionResults) return;
+    if (!appState.conversionResults || !appState.conversionResults.stats) return;
     
     const stats = appState.conversionResults.stats;
-    document.getElementById('charCount').textContent = stats.length;
-    document.getElementById('uniqueChars').textContent = stats.unique_chars;
+    const charCountEl = document.getElementById('charCount');
+    const uniqueCharsEl = document.getElementById('uniqueChars');
+    const byteCountEl = document.getElementById('byteCount');
+    
+    if (charCountEl && stats.length !== undefined) {
+        charCountEl.textContent = stats.length;
+    }
+    if (uniqueCharsEl && stats.unique_chars !== undefined) {
+        uniqueCharsEl.textContent = stats.unique_chars;
+    }
     
     // 计算总字节数（以UTF-8为基准）
-    const utf8Result = appState.conversionResults.overall['utf-8'];
-    if (utf8Result && utf8Result.success) {
-        document.getElementById('byteCount').textContent = utf8Result.length;
+    const utf8Result = appState.conversionResults.overall && appState.conversionResults.overall['utf-8'];
+    if (byteCountEl && utf8Result && utf8Result.success && utf8Result.length !== undefined) {
+        byteCountEl.textContent = utf8Result.length;
     }
 }
 
 function updateCharacterView() {
-    if (!appState.conversionResults) return;
+    if (!appState.conversionResults || !appState.conversionResults.characters) return;
     
     const grid = document.getElementById('charactersGrid');
+    if (!grid) return;
+    
     grid.innerHTML = '';
     
     appState.conversionResults.characters.forEach((charData, index) => {
@@ -344,11 +366,15 @@ function generateCopyData(charData) {
 }
 
 function updateTableView() {
-    if (!appState.conversionResults) return;
+    if (!appState.conversionResults || !appState.conversionResults.characters) return;
     
     const table = document.getElementById('resultsTable');
+    if (!table) return;
+    
     const thead = table.querySelector('thead tr');
     const tbody = table.querySelector('tbody');
+    
+    if (!thead || !tbody) return;
     
     // 更新表头
     thead.innerHTML = `
@@ -365,11 +391,11 @@ function updateTableView() {
     appState.conversionResults.characters.forEach(charData => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td class="char-cell">${charData.char}</td>
-            <td>${charData.unicode}</td>
-            ${appState.settings.showUnicodeName ? `<td>${charData.unicode_name}</td>` : ''}
+            <td class="char-cell">${charData.char || ''}</td>
+            <td>${charData.unicode || ''}</td>
+            ${appState.settings.showUnicodeName ? `<td>${charData.unicode_name || ''}</td>` : ''}
             ${Array.from(appState.selectedEncodings).map(encoding => {
-                const result = charData.encodings[encoding];
+                const result = charData.encodings && charData.encodings[encoding];
                 const value = result && result.success ? formatEncodingValue(result) : 'N/A';
                 return `<td class="encoding-cell">${value}</td>`;
             }).join('')}
@@ -379,10 +405,12 @@ function updateTableView() {
 }
 
 function updateRawView() {
-    if (!appState.conversionResults) return;
+    if (!appState.conversionResults || !appState.conversionResults.overall) return;
     
     const tabs = document.getElementById('encodingTabs');
     const content = document.getElementById('rawContent');
+    
+    if (!tabs || !content) return;
     
     // 更新标签页
     tabs.innerHTML = '';
@@ -407,27 +435,29 @@ function updateRawView() {
 
 function showRawContent(encoding) {
     const content = document.getElementById('rawContent');
+    if (!content || !appState.conversionResults || !appState.conversionResults.overall) return;
+    
     const result = appState.conversionResults.overall[encoding];
     
     if (result && result.success) {
         let displayText = '';
         switch (appState.settings.displayFormat) {
             case 'hex':
-                displayText = result.hex;
+                displayText = result.hex || '';
                 break;
             case 'decimal':
-                displayText = result.bytes.join(appState.settings.byteSeparator);
+                displayText = result.bytes ? result.bytes.join(appState.settings.byteSeparator) : '';
                 break;
             case 'binary':
-                displayText = result.bytes.map(b => 
+                displayText = result.bytes ? result.bytes.map(b => 
                     b.toString(2).padStart(8, '0')
-                ).join(appState.settings.byteSeparator);
+                ).join(appState.settings.byteSeparator) : '';
                 break;
             case 'base64':
-                displayText = result.base64;
+                displayText = result.base64 || '';
                 break;
             default:
-                displayText = result.hex;
+                displayText = result.hex || '';
         }
         
         content.textContent = displayText;
@@ -438,7 +468,15 @@ function showRawContent(encoding) {
 
 function populateEncodingSelector(encodings) {
     const grid = document.getElementById('encodingGrid');
+    if (!grid) return;
+    
     grid.innerHTML = '';
+    
+    // 确保encodings是数组
+    if (!Array.isArray(encodings)) {
+        console.error('Encodings should be an array:', encodings);
+        return;
+    }
     
     encodings.forEach(encoding => {
         const item = document.createElement('div');
@@ -654,14 +692,28 @@ function loadSettings() {
 function generateFullCopyData() {
     if (!appState.conversionResults) return '';
     
-    let data = `文本: "${appState.currentText}"\n`;
-    data += `字符数: ${appState.conversionResults.stats.length}\n`;
-    data += `唯一字符: ${appState.conversionResults.stats.unique_chars}\n\n`;
+    let data = `字符编码转换结果\n`;
+    data += `原始文本: ${appState.currentText}\n`;
+    data += `字符数: ${appState.conversionResults.stats ? appState.conversionResults.stats.length : 0}\n`;
+    data += `唯一字符数: ${appState.conversionResults.stats ? appState.conversionResults.stats.unique_chars : 0}\n\n`;
     
-    data += '=== 字符详情 ===\n';
-    appState.conversionResults.characters.forEach(charData => {
-        data += generateCopyData(charData) + '\n';
-    });
+    if (appState.conversionResults.characters) {
+        appState.conversionResults.characters.forEach(charData => {
+            data += `字符: ${charData.char}\n`;
+            data += `Unicode: ${charData.unicode}\n`;
+            if (charData.unicode_name) {
+                data += `名称: ${charData.unicode_name}\n`;
+            }
+            
+            appState.selectedEncodings.forEach(encoding => {
+                const result = charData.encodings && charData.encodings[encoding];
+                if (result && result.success) {
+                    data += `${encoding.toUpperCase()}: ${formatEncodingValue(result)}\n`;
+                }
+            });
+            data += '\n';
+        });
+    }
     
     return data;
 }
