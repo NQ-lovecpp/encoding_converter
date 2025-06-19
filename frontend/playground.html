@@ -59,14 +59,90 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             display: flex;
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+            position: relative;
+        }
+
+        /* 渐变动画文字效果 */
+        .animated-gradient-text {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #40ffaa,
+                #4079ff,
+                #ffffff,
+                #40ffaa,
+                #4079ff,
+                #ffffff
+            );
+            background-size: 300% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            25% {
+                background-position: 50% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            75% {
+                background-position: 50% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .logo-icon {
+            color: #40ffaa;
+            filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
+            animation: iconGlow 3s ease-in-out infinite alternate;
+            will-change: color, filter;
+        }
+
+        @keyframes iconGlow {
+            0% {
+                color: #40ffaa;
+                filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
+            }
+            50% {
+                color: #4079ff;
+                filter: drop-shadow(0 0 12px rgba(64, 121, 255, 0.5));
+            }
+            100% {
+                color: #ffffff;
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+            }
+        }
+
+        /* 针对低性能设备的优化 */
+        @media (prefers-reduced-motion: reduce) {
+            .animated-gradient-text {
+                animation: none;
+                background: linear-gradient(90deg, #ffffff, #40ffaa);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            .logo-icon {
+                animation: none;
+                color: #40ffaa;
+                filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
+            }
         }
 
         .nav-links {
@@ -424,15 +500,15 @@
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
-                <i class="fas fa-gamepad"></i>
-                编码转换器 Pro
+                <i class="fas fa-gamepad logo-icon"></i>
+                <span class="animated-gradient-text">字符编码转换器 Pro</span>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html" class="nav-link">
                     <i class="fas fa-home"></i> 主页
                 </a></li>
                 <li><a href="converter.html" class="nav-link">
-                    <i class="fas fa-exchange-alt"></i> 转换器
+                    <i class="fas fa-sync-alt"></i> 转换器
                 </a></li>
                 <li><a href="playground.html" class="nav-link active">
                     <i class="fas fa-gamepad"></i> 游乐场
@@ -444,9 +520,11 @@
                     <i class="fas fa-history"></i> 历史
                 </a></li>
             </ul>
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-palette"></i>
+                </button>
+            </div>
         </div>
     </nav>
 

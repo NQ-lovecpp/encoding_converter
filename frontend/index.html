@@ -144,14 +144,73 @@
         .logo {
             font-size: 1.3rem;
             font-weight: 800;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             display: flex;
             align-items: center;
             gap: 8px;
             flex-shrink: 0;
+            position: relative;
+        }
+
+        /* 渐变动画文字效果 */
+        .animated-gradient-text {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #40ffaa,
+                #4079ff,
+                #ffffff,
+                #40ffaa,
+                #4079ff,
+                #ffffff
+            );
+            background-size: 300% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            25% {
+                background-position: 50% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            75% {
+                background-position: 50% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .logo-icon {
+            color: #40ffaa;
+            filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
+            animation: iconGlow 3s ease-in-out infinite alternate;
+            will-change: color, filter;
+        }
+
+        @keyframes iconGlow {
+            0% {
+                color: #40ffaa;
+                filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
+            }
+            50% {
+                color: #4079ff;
+                filter: drop-shadow(0 0 12px rgba(64, 121, 255, 0.5));
+            }
+            100% {
+                color: #ffffff;
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+            }
         }
 
         .nav-links {
@@ -566,6 +625,14 @@
                 margin: 0 10px 60px;
                 padding: 40px 20px;
             }
+            
+            .animated-gradient-text {
+                animation-duration: 6s; /* 稍微减慢动画速度 */
+            }
+            
+            .logo-icon {
+                animation-duration: 4s; /* 减慢图标动画 */
+            }
         }
 
         @media (max-width: 480px) {
@@ -633,6 +700,23 @@
                 background: rgba(255, 255, 255, 0.15);
             }
         }
+
+        /* 针对低性能设备的优化 */
+        @media (prefers-reduced-motion: reduce) {
+            .animated-gradient-text {
+                animation: none;
+                background: linear-gradient(90deg, #ffffff, #40ffaa);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            .logo-icon {
+                animation: none;
+                color: #40ffaa;
+                filter: drop-shadow(0 0 8px rgba(64, 255, 170, 0.3));
+            }
+        }
     </style>
 </head>
 <body>
@@ -646,8 +730,8 @@
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
-                <i class="fas fa-code"></i>
-                编码转换器 Pro
+                <i class="fas fa-code logo-icon"></i>
+                <span class="animated-gradient-text">编码转换器 Pro</span>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html" class="nav-link active">
