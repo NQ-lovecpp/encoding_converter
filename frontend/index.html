@@ -1,249 +1,916 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ 字符编码转换器 Pro</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>字符编码转换器 Pro - 现代化编码工具</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* 现代化液态玻璃设计 */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --glass-backdrop: blur(16px);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --purple-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --cosmic-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(0, 0, 0, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cosmic-gradient);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 增强背景动画 */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(120, 119, 255, 0.3) 0%, transparent 50%);
+            animation: cosmicDrift 20s ease-in-out infinite;
+        }
+
+        @keyframes cosmicDrift {
+            0%, 100% { transform: translateX(0px) translateY(0px); }
+            33% { transform: translateX(-50px) translateY(-30px); }
+            66% { transform: translateX(50px) translateY(-20px); }
+        }
+
+        /* 浮动粒子系统 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        .particle-1 {
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.4);
+            animation-duration: 8s;
+        }
+
+        .particle-2 {
+            width: 2px;
+            height: 2px;
+            background: rgba(102, 126, 234, 0.6);
+            animation-duration: 12s;
+        }
+
+        .particle-3 {
+            width: 1px;
+            height: 1px;
+            background: rgba(240, 147, 251, 0.8);
+            animation-duration: 15s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 修复导航栏排版 */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 60px;
+            padding: 12px 24px;
+            box-shadow: var(--glass-shadow);
+            min-width: fit-content;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            white-space: nowrap;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            flex-shrink: 0;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 英雄区域 - 参考reactbits风格 */
+        .hero-section {
+            padding: 160px 20px 100px;
+            text-align: center;
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 8px 20px;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 50%, rgba(102, 126, 234, 0.9) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            font-weight: 500;
+            line-height: 1.4;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 680px;
+            margin: 0 auto 50px;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .cta-button.secondary {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            box-shadow: none;
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* 特性展示区域 - 现代化网格 */
+        .features-section {
+            padding: 100px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: white;
+            position: relative;
+        }
+
+        .feature-icon.converter { background: var(--primary-gradient); }
+        .feature-icon.playground { background: var(--accent-gradient); }
+        .feature-icon.visualizer { background: var(--success-gradient); }
+        .feature-icon.history { background: var(--warning-gradient); }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+            color: white;
+        }
+
+        .feature-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 auto;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            justify-content: center;
+        }
+
+        .feature-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* 统计数据展示 */
+        .stats-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 60px 40px;
+            margin: 0 20px 100px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            counter-reset: stat-counter;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* 响应式设计优化 */
+        @media (max-width: 1024px) {
+            .nav-content {
+                gap: 15px;
+            }
+            
+            .nav-links {
+                gap: 4px;
+            }
+            
+            .nav-link {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                width: 95%;
+                padding: 10px 16px;
+                top: 10px;
+            }
+            
+            .nav-content {
+                gap: 12px;
+            }
+            
+            .logo {
+                font-size: 1.1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .theme-toggle {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .hero-section {
+                padding: 120px 15px 60px;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+            
+            .stats-section {
+                margin: 0 10px 60px;
+                padding: 40px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 8px 12px;
+            }
+            
+            .logo {
+                font-size: 1rem;
+            }
+            
+            .hero-badge {
+                font-size: 0.8rem;
+                padding: 6px 16px;
+            }
+            
+            .cta-button {
+                padding: 14px 24px;
+                font-size: 0.9rem;
+            }
+            
+            .feature-card {
+                padding: 30px 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        /* 移动端导航显示 */
+        @media (max-width: 768px) {
+            .mobile-nav-indicator {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--glass-bg);
+                backdrop-filter: var(--glass-backdrop);
+                border: 1px solid var(--glass-border);
+                border-radius: 50px;
+                padding: 12px 20px;
+                display: flex;
+                gap: 15px;
+                box-shadow: var(--glass-shadow);
+            }
+            
+            .mobile-nav-item {
+                color: rgba(255, 255, 255, 0.7);
+                text-decoration: none;
+                padding: 8px;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .mobile-nav-item:hover,
+            .mobile-nav-item.active {
+                color: white;
+                background: rgba(255, 255, 255, 0.15);
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- 导航栏 -->
-        <nav class="navbar">
-            <div class="nav-brand">
+    <!-- 宇宙背景 -->
+    <div class="cosmic-bg"></div>
+    
+    <!-- 粒子系统 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
                 <i class="fas fa-code"></i>
-                <span>编码转换器 Pro</span>
+                编码转换器 Pro
             </div>
-            <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div class="language-select">
-                    <select id="interfaceLanguage">
-                        <option value="zh">中文</option>
-                        <option value="en">English</option>
-                    </select>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i> 主页
+                </a></li>
+                <li><a href="converter.html" class="nav-link">
+                    <i class="fas fa-sync-alt"></i> 转换器
+                </a></li>
+                <li><a href="playground.html" class="nav-link">
+                    <i class="fas fa-gamepad"></i> 游乐场
+                </a></li>
+                <li><a href="visualizer.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i> 可视化
+                </a></li>
+                <li><a href="history.html" class="nav-link">
+                    <i class="fas fa-history"></i> 历史
+                </a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-palette"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 移动端底部导航 -->
+    <div class="mobile-nav-indicator" style="display: none;">
+        <a href="index.html" class="mobile-nav-item active">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="converter.html" class="mobile-nav-item">
+            <i class="fas fa-sync-alt"></i>
+        </a>
+        <a href="playground.html" class="mobile-nav-item">
+            <i class="fas fa-gamepad"></i>
+        </a>
+        <a href="visualizer.html" class="mobile-nav-item">
+            <i class="fas fa-chart-line"></i>
+        </a>
+        <a href="history.html" class="mobile-nav-item">
+            <i class="fas fa-history"></i>
+        </a>
+    </div>
+
+    <!-- 英雄区域 -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            <i class="fas fa-sparkles"></i>
+            现代化编码工具平台
+        </div>
+        
+        <h1 class="hero-title">
+            字符编码转换器
+            <br>
+            <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pro</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+            强大、智能、美观的编码转换体验
+        </p>
+        
+        <p class="hero-description">
+            探索字符编码的奥秘，体验前所未有的转换工具。支持多种编码格式，提供可视化分析，
+            让编码学习变得简单有趣。无论您是开发者、学生还是编码爱好者，这里都有您需要的功能。
+        </p>
+        
+        <div class="hero-cta">
+            <a href="converter.html" class="cta-button">
+                <i class="fas fa-rocket"></i>
+                开始使用
+            </a>
+            <a href="playground.html" class="cta-button secondary">
+                <i class="fas fa-play-circle"></i>
+                体验游戏
+            </a>
+        </div>
+    </section>
+
+    <!-- 特性展示 -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2 class="section-title">核心功能</h2>
+            <p class="section-subtitle">
+                一站式编码解决方案，从基础转换到高级分析
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card" onclick="window.location.href='converter.html'">
+                <div class="feature-icon converter">
+                    <i class="fas fa-sync-alt"></i>
                 </div>
+                <h3 class="feature-title">智能转换器</h3>
+                <p class="feature-description">
+                    支持UTF-8、UTF-16、GBK、ASCII等多种编码格式的实时转换，
+                    智能检测编码类型，提供详细的转换信息和统计数据。
+                </p>
+                <a href="converter.html" class="feature-link">
+                    立即转换 <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-        </nav>
 
-        <!-- 主要内容区域 -->
-        <main class="main-content">
-            <!-- 侧边栏 -->
-            <aside class="sidebar">
-                <div class="sidebar-section">
-                    <h3><i class="fas fa-cog"></i> 编码设置</h3>
-                    <div class="encoding-selector">
-                        <label>目标编码格式：</label>
-                        <div class="encoding-grid" id="encodingGrid">
-                            <!-- 动态生成编码选项 -->
-                        </div>
-                    </div>
+            <div class="feature-card" onclick="window.location.href='playground.html'">
+                <div class="feature-icon playground">
+                    <i class="fas fa-gamepad"></i>
                 </div>
-
-                <div class="sidebar-section">
-                    <h3><i class="fas fa-chart-bar"></i> 统计信息</h3>
-                    <div class="stats-container" id="statsContainer">
-                        <div class="stat-item">
-                            <span class="stat-label">字符数</span>
-                            <span class="stat-value" id="charCount">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">字节数</span>
-                            <span class="stat-value" id="byteCount">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">唯一字符</span>
-                            <span class="stat-value" id="uniqueChars">0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <h3><i class="fas fa-file-upload"></i> 文件操作</h3>
-                    <div class="file-upload-area" id="fileUploadArea">
-                        <input type="file" id="fileInput" accept=".txt,.csv,.json,.xml,.html" hidden>
-                        <div class="upload-content">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>拖拽文件或点击上传</p>
-                            <small>支持 TXT, CSV, JSON, XML, HTML</small>
-                        </div>
-                    </div>
-                    <div class="file-actions">
-                        <button class="btn btn-outline" id="detectBtn">
-                            <i class="fas fa-search"></i> 检测编码
-                        </button>
-                        <button class="btn btn-primary" id="downloadBtn" disabled>
-                            <i class="fas fa-download"></i> 下载转换
-                        </button>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- 主工作区 -->
-            <div class="workspace">
-                <!-- 输入区域 -->
-                <section class="input-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-keyboard"></i> 文本输入</h2>
-                        <div class="section-actions">
-                            <button class="btn btn-sm" id="clearBtn">
-                                <i class="fas fa-trash"></i> 清空
-                            </button>
-                            <button class="btn btn-sm" id="pasteBtn">
-                                <i class="fas fa-paste"></i> 粘贴
-                            </button>
-                        </div>
-                    </div>
-                    <div class="input-container">
-                        <textarea 
-                            id="textInput" 
-                            placeholder="请输入要转换的文本，或上传文件..." 
-                            rows="6"
-                        ></textarea>
-                        <div class="input-footer">
-                            <span class="char-counter" id="charCounter">0 字符</span>
-                            <div class="encoding-info" id="inputEncodingInfo">
-                                <i class="fas fa-info-circle"></i>
-                                <span>UTF-8</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 结果展示区域 -->
-                <section class="results-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-magic"></i> 转换结果</h2>
-                        <div class="view-options">
-                            <button class="view-btn active" data-view="characters">
-                                <i class="fas fa-th"></i> 字符视图
-                            </button>
-                            <button class="view-btn" data-view="table">
-                                <i class="fas fa-table"></i> 表格视图
-                            </button>
-                            <button class="view-btn" data-view="raw">
-                                <i class="fas fa-code"></i> 原始数据
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 字符视图 -->
-                    <div class="view-container active" id="charactersView">
-                        <div class="characters-grid" id="charactersGrid">
-                            <!-- 动态生成字符卡片 -->
-                        </div>
-                    </div>
-
-                    <!-- 表格视图 -->
-                    <div class="view-container" id="tableView">
-                        <div class="table-container">
-                            <table class="results-table" id="resultsTable">
-                                <thead>
-                                    <tr>
-                                        <th>字符</th>
-                                        <th>Unicode</th>
-                                        <th>名称</th>
-                                        <!-- 动态添加编码列 -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- 动态生成表格行 -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 原始数据视图 -->
-                    <div class="view-container" id="rawView">
-                        <div class="raw-data-container">
-                            <div class="encoding-tabs" id="encodingTabs">
-                                <!-- 动态生成编码标签页 -->
-                            </div>
-                            <div class="raw-content" id="rawContent">
-                                <!-- 动态生成原始数据 -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <h3 class="feature-title">编码游乐场</h3>
+                <p class="feature-description">
+                    通过趣味游戏学习编码知识，包括编码挑战、记忆匹配、
+                    速度打字等多种游戏模式，让学习变得生动有趣。
+                </p>
+                <a href="playground.html" class="feature-link">
+                    开始游戏 <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-        </main>
 
-        <!-- 工具栏 -->
-        <div class="toolbar">
-            <div class="tool-group">
-                <button class="tool-btn" id="copyBtn" title="复制结果">
-                    <i class="fas fa-copy"></i>
-                </button>
-                <button class="tool-btn" id="shareBtn" title="分享">
-                    <i class="fas fa-share-alt"></i>
-                </button>
-                <button class="tool-btn" id="settingsBtn" title="设置">
-                    <i class="fas fa-cog"></i>
-                </button>
+            <div class="feature-card" onclick="window.location.href='visualizer.html'">
+                <div class="feature-icon visualizer">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">可视化分析</h3>
+                <p class="feature-description">
+                    深度分析文本编码特征，生成精美的图表和统计报告，
+                    帮助您更好地理解编码效率和字符分布。
+                </p>
+                <a href="visualizer.html" class="feature-link">
+                    查看分析 <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-            <div class="tool-group">
-                <button class="tool-btn" id="historyBtn" title="历史记录">
+
+            <div class="feature-card" onclick="window.location.href='history.html'">
+                <div class="feature-icon history">
                     <i class="fas fa-history"></i>
-                </button>
-                <button class="tool-btn" id="helpBtn" title="帮助">
-                    <i class="fas fa-question-circle"></i>
-                </button>
+                </div>
+                <h3 class="feature-title">智能历史</h3>
+                <p class="feature-description">
+                    自动保存转换历史，智能分类管理，支持搜索和筛选，
+                    让您的工作记录井然有序，随时回顾。
+                </p>
+                <a href="history.html" class="feature-link">
+                    查看历史 <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 模态框 -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>设置</h3>
-                <button class="modal-close">&times;</button>
+    <!-- 统计数据 -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-target="50">0</div>
+                <div class="stat-label">支持编码格式</div>
             </div>
-            <div class="modal-body">
-                <div class="setting-group">
-                    <label>显示格式</label>
-                    <select id="displayFormat">
-                        <option value="hex">十六进制</option>
-                        <option value="decimal">十进制</option>
-                        <option value="binary">二进制</option>
-                        <option value="base64">Base64</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <label>字节分隔符</label>
-                    <input type="text" id="byteSeparator" value=" " placeholder="空格">
-                </div>
-                <div class="setting-group">
-                    <label>
-                        <input type="checkbox" id="autoConvert" checked>
-                        自动转换
-                    </label>
-                </div>
-                <div class="setting-group">
-                    <label>
-                        <input type="checkbox" id="showUnicodeName" checked>
-                        显示Unicode名称
-                    </label>
-                </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="1000000">0</div>
+                <div class="stat-label">处理字符数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="99">0</div>
+                <div class="stat-label">转换准确率(%)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="4">0</div>
+                <div class="stat-label">核心功能模块</div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 加载指示器 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>处理中...</p>
-        </div>
-    </div>
+    <script>
+        // 粒子系统初始化
+        function initParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                const type = Math.floor(Math.random() * 3) + 1;
+                particle.className = `particle particle-${type}`;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (8 + Math.random() * 7) + 's';
+                container.appendChild(particle);
+            }
+        }
 
-    <!-- 通知系统 -->
-    <div class="notifications" id="notifications"></div>
+        // 数字动画
+        function animateNumbers() {
+            const stats = document.querySelectorAll('.stat-number');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = parseInt(entry.target.dataset.target);
+                        animateCounter(entry.target, target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
 
-    <!-- JavaScript -->
-    <script src="app.js"></script>
+            stats.forEach(stat => observer.observe(stat));
+        }
+
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const duration = 2000;
+            const stepTime = duration / 100;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                if (target >= 1000000) {
+                    element.textContent = (current / 1000000).toFixed(1) + 'M+';
+                } else if (target >= 1000) {
+                    element.textContent = (current / 1000).toFixed(0) + 'K+';
+                } else {
+                    element.textContent = Math.floor(current) + (target === 99 ? '%' : '');
+                }
+            }, stepTime);
+        }
+
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // 移动端导航显示
+        function handleMobileNav() {
+            const mobileNav = document.querySelector('.mobile-nav-indicator');
+            if (window.innerWidth <= 768) {
+                mobileNav.style.display = 'flex';
+            } else {
+                mobileNav.style.display = 'none';
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            animateNumbers();
+            handleMobileNav();
+            
+            // 加载保存的主题
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+
+        // 窗口大小变化时重新处理移动端导航
+        window.addEventListener('resize', handleMobileNav);
+
+        // 添加页面滚动视差效果
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.cosmic-bg');
+            const speed = 0.5;
+            parallax.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+    </script>
 </body>
 </html> 

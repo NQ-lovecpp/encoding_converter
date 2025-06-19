@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ 字符编码转换器</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 液态玻璃导航栏样式 - 与主页保持一致 */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --glass-backdrop: blur(10px);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 统一的导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 15px 30px;
+            box-shadow: var(--glass-shadow);
+            width: auto;
+            max-width: 90%;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: var(--glass-bg);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--primary-gradient);
+        }
+
+        .language-select select {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .language-select select option {
+            background: #2a2a2a;
+            color: white;
+        }
+
+        /* 主要内容区域调整 */
+        .app-container {
+            padding-top: 100px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .nav-content {
+                gap: 20px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .nav-link {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                width: 95%;
+                padding: 10px 20px;
+            }
+            
+            .nav-content {
+                gap: 15px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .theme-toggle {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 8px 15px;
+            }
+            
+            .logo {
+                font-size: 1.1rem;
+            }
+            
+            .theme-toggle {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 统一的液态玻璃导航栏 -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    编码转换器 Pro
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> 主页
+                    </a></li>
+                    <li><a href="converter.html" class="nav-link active">
+                        <i class="fas fa-exchange-alt"></i> 转换器
+                    </a></li>
+                    <li><a href="playground.html" class="nav-link">
+                        <i class="fas fa-gamepad"></i> 游乐场
+                    </a></li>
+                    <li><a href="visualizer.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i> 可视化
+                    </a></li>
+                    <li><a href="history.html" class="nav-link">
+                        <i class="fas fa-history"></i> 历史
+                    </a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="language-select">
+                        <select id="interfaceLanguage">
+                            <option value="zh">中文</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-cog"></i> 编码设置</h3>
+                    <div class="encoding-selector">
+                        <label>目标编码格式：</label>
+                        <div class="encoding-grid" id="encodingGrid">
+                            <!-- 动态生成编码选项 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-chart-bar"></i> 统计信息</h3>
+                    <div class="stats-container" id="statsContainer">
+                        <div class="stat-item">
+                            <span class="stat-label">字符数</span>
+                            <span class="stat-value" id="charCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">字节数</span>
+                            <span class="stat-value" id="byteCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">唯一字符</span>
+                            <span class="stat-value" id="uniqueChars">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-file-upload"></i> 文件操作</h3>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <input type="file" id="fileInput" accept=".txt,.csv,.json,.xml,.html" hidden>
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>拖拽文件或点击上传</p>
+                            <small>支持 TXT, CSV, JSON, XML, HTML</small>
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="btn btn-outline" id="detectBtn">
+                            <i class="fas fa-search"></i> 检测编码
+                        </button>
+                        <button class="btn btn-primary" id="downloadBtn" disabled>
+                            <i class="fas fa-download"></i> 下载转换
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 主工作区 -->
+            <div class="workspace">
+                <!-- 输入区域 -->
+                <section class="input-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-keyboard"></i> 文本输入</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-sm" id="clearBtn">
+                                <i class="fas fa-trash"></i> 清空
+                            </button>
+                            <button class="btn btn-sm" id="pasteBtn">
+                                <i class="fas fa-paste"></i> 粘贴
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <textarea 
+                            id="textInput" 
+                            placeholder="请输入要转换的文本，或上传文件..." 
+                            rows="6"
+                        ></textarea>
+                        <div class="input-footer">
+                            <span class="char-counter" id="charCounter">0 字符</span>
+                            <div class="encoding-info" id="inputEncodingInfo">
+                                <i class="fas fa-info-circle"></i>
+                                <span>UTF-8</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 结果展示区域 -->
+                <section class="results-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-magic"></i> 转换结果</h2>
+                        <div class="view-options">
+                            <button class="view-btn active" data-view="characters">
+                                <i class="fas fa-th"></i> 字符视图
+                            </button>
+                            <button class="view-btn" data-view="table">
+                                <i class="fas fa-table"></i> 表格视图
+                            </button>
+                            <button class="view-btn" data-view="raw">
+                                <i class="fas fa-code"></i> 原始数据
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 字符视图 -->
+                    <div class="view-container active" id="charactersView">
+                        <div class="characters-grid" id="charactersGrid">
+                            <!-- 动态生成字符卡片 -->
+                        </div>
+                    </div>
+
+                    <!-- 表格视图 -->
+                    <div class="view-container" id="tableView">
+                        <div class="table-container">
+                            <table class="results-table" id="resultsTable">
+                                <thead>
+                                    <tr>
+                                        <th>字符</th>
+                                        <th>Unicode</th>
+                                        <th>名称</th>
+                                        <!-- 动态添加编码列 -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 动态生成表格行 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 原始数据视图 -->
+                    <div class="view-container" id="rawView">
+                        <div class="raw-data-container">
+                            <div class="encoding-tabs" id="encodingTabs">
+                                <!-- 动态生成编码标签页 -->
+                            </div>
+                            <div class="raw-content" id="rawContent">
+                                <!-- 动态生成原始数据 -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <button class="tool-btn" id="copyBtn" title="复制结果">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <button class="tool-btn" id="shareBtn" title="分享">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button class="tool-btn" id="settingsBtn" title="设置">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+            <div class="tool-group">
+                <button class="tool-btn" id="historyBtn" title="历史记录">
+                    <i class="fas fa-history"></i>
+                </button>
+                <button class="tool-btn" id="helpBtn" title="帮助">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>设置</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>显示格式</label>
+                    <select id="displayFormat">
+                        <option value="hex">十六进制</option>
+                        <option value="decimal">十进制</option>
+                        <option value="binary">二进制</option>
+                        <option value="base64">Base64</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>字节分隔符</label>
+                    <input type="text" id="byteSeparator" value=" " placeholder="空格">
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="autoConvert" checked>
+                        自动转换
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="showUnicodeName" checked>
+                        显示Unicode名称
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载指示器 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>处理中...</p>
+        </div>
+    </div>
+
+    <!-- 通知系统 -->
+    <div class="notifications" id="notifications"></div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html> 

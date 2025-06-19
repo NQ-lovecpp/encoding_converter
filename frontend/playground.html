@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 编码游乐场 - 字符编码转换器 Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 继承主页样式变量 */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --glass-backdrop: blur(10px);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 15px 30px;
+            box-shadow: var(--glass-shadow);
+            width: auto;
+            max-width: 90%;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: var(--glass-bg);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--primary-gradient);
+        }
+
+        .main-container {
+            padding: 120px 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .game-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .game-icon.challenge { background: var(--accent-gradient); }
+        .game-icon.memory { background: var(--success-gradient); }
+        .game-icon.quiz { background: var(--warning-gradient); }
+        .game-icon.speed { background: var(--primary-gradient); }
+
+        .game-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .game-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .play-button {
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        /* 游戏模态框 */
+        .game-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .game-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .game-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .game-progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--success-gradient);
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .option-btn.correct {
+            background: var(--success-gradient);
+        }
+
+        .option-btn.wrong {
+            background: var(--accent-gradient);
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-card {
+                padding: 25px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            /* 响应式导航栏 */
+            .navbar {
+                width: 95%;
+                padding: 10px 20px;
+            }
+            
+            .nav-content {
+                gap: 15px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .theme-toggle {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-content {
+                gap: 20px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .nav-link {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 8px 15px;
+            }
+            
+            .logo {
+                font-size: 1.1rem;
+            }
+            
+            .theme-toggle {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                编码转换器 Pro
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> 主页
+                </a></li>
+                <li><a href="converter.html" class="nav-link">
+                    <i class="fas fa-exchange-alt"></i> 转换器
+                </a></li>
+                <li><a href="playground.html" class="nav-link active">
+                    <i class="fas fa-gamepad"></i> 游乐场
+                </a></li>
+                <li><a href="visualizer.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i> 可视化
+                </a></li>
+                <li><a href="history.html" class="nav-link">
+                    <i class="fas fa-history"></i> 历史
+                </a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1 class="page-title">🎮 编码游乐场</h1>
+            <p class="page-subtitle">通过有趣的游戏学习字符编码知识</p>
+        </div>
+
+        <!-- 游戏网格 -->
+        <div class="games-grid">
+            <div class="game-card" onclick="startGame('encoding-challenge')">
+                <div class="game-icon challenge">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <h3 class="game-title">编码挑战</h3>
+                <p class="game-description">
+                    猜测字符的不同编码表示，挑战你的编码知识！从简单的ASCII到复杂的UTF-8。
+                </p>
+                <div class="game-stats">
+                    <span><i class="fas fa-star"></i> 最高分: <span id="challenge-score">0</span></span>
+                    <span><i class="fas fa-clock"></i> 最佳时间: <span id="challenge-time">--</span></span>
+                </div>
+                <button class="play-button">
+                    <i class="fas fa-play"></i> 开始挑战
+                </button>
+            </div>
+
+            <div class="game-card" onclick="startGame('memory-match')">
+                <div class="game-icon memory">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="game-title">编码记忆</h3>
+                <p class="game-description">
+                    记忆配对游戏！将字符与其编码表示进行匹配，锻炼你的编码记忆能力。
+                </p>
+                <div class="game-stats">
+                    <span><i class="fas fa-star"></i> 最高分: <span id="memory-score">0</span></span>
+                    <span><i class="fas fa-clock"></i> 最佳时间: <span id="memory-time">--</span></span>
+                </div>
+                <button class="play-button">
+                    <i class="fas fa-play"></i> 开始记忆
+                </button>
+            </div>
+
+            <div class="game-card" onclick="startGame('encoding-quiz')">
+                <div class="game-icon quiz">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3 class="game-title">编码知识问答</h3>
+                <p class="game-description">
+                    测试你的编码理论知识！包含编码历史、原理和应用场景的问答题。
+                </p>
+                <div class="game-stats">
+                    <span><i class="fas fa-star"></i> 正确率: <span id="quiz-accuracy">0%</span></span>
+                    <span><i class="fas fa-trophy"></i> 完成次数: <span id="quiz-completed">0</span></span>
+                </div>
+                <button class="play-button">
+                    <i class="fas fa-play"></i> 开始问答
+                </button>
+            </div>
+
+            <div class="game-card" onclick="startGame('speed-typing')">
+                <div class="game-icon speed">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <h3 class="game-title">编码速打</h3>
+                <p class="game-description">
+                    快速输入编码值！在限定时间内正确输入尽可能多的字符编码。
+                </p>
+                <div class="game-stats">
+                    <span><i class="fas fa-star"></i> 最高分: <span id="speed-score">0</span></span>
+                    <span><i class="fas fa-tachometer-alt"></i> 最快速度: <span id="speed-wpm">0 WPM</span></span>
+                </div>
+                <button class="play-button">
+                    <i class="fas fa-play"></i> 开始速打
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏模态框 -->
+    <div class="game-modal" id="gameModal">
+        <div class="game-content">
+            <button class="close-btn" onclick="closeGame()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="game-header">
+                <h2 id="gameTitle">游戏标题</h2>
+                <div class="score-display">
+                    得分: <span id="currentScore">0</span> | 
+                    时间: <span id="gameTimer">00:00</span>
+                </div>
+                <div class="game-progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+            <div id="gameArea">
+                <!-- 游戏内容区域 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="playground.js"></script>
+</body>
+</html> 
