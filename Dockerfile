@@ -4,13 +4,17 @@ FROM node:18-alpine AS vue-builder
 # 设置工作目录
 WORKDIR /vue-build
 
-# 复制Vue项目文件
+# 首先复制package.json文件
 COPY frontend-vue/package*.json ./
+
+# 安装依赖
+RUN npm ci
+
+# 然后复制源代码
 COPY frontend-vue/ ./
 
-# 安装依赖并构建Vue项目（包含开发依赖，因为构建工具在devDependencies中）
-RUN npm ci && \
-    npm run build
+# 构建Vue项目
+RUN npm run build
 
 # 使用Python 3.11官方镜像作为基础镜像
 FROM python:3.11-slim

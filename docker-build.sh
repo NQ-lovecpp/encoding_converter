@@ -6,18 +6,20 @@
 echo "🚀 开始构建字符编码转换器 Pro"
 echo "================================"
 
-# 检查Docker是否安装
-if ! command -v docker &> /dev/null; then
+# 检查Docker是否安装（使用which命令）
+if ! which docker > /dev/null 2>&1; then
     echo "❌ 错误: Docker未安装或未添加到PATH"
     exit 1
 fi
 
 # 检查docker compose是否可用
-if ! docker compose version &> /dev/null; then
+if ! docker compose version > /dev/null 2>&1; then
     echo "❌ 错误: Docker Compose未安装或版本过低"
     echo "💡 请确保Docker Compose版本 >= 2.0"
     exit 1
 fi
+
+echo "✅ Docker环境检查通过"
 
 # 显示当前目录和文件
 echo "📂 当前目录: $(pwd)"
