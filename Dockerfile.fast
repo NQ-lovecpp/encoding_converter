@@ -1,0 +1,37 @@
+# 快速构建Dockerfile - 使用预构建的Vue项目
+FROM python:3.11-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# 复制Python依赖文件
+COPY requirements.txt .
+
+# 安装Python依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制应用代码
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
+
+# 复制预构建的Vue项目
+COPY frontend-vue/dist/ ./frontend-vue/dist/
+
+# 复制全局配置
+COPY config.js ./
+
+# 设置环境变量
+ENV PYTHONPATH=/app
+ENV FLASK_APP=backend/app.py
+ENV FLASK_ENV=production
+
+# 暴露端口
+EXPOSE 15000 15001 15002
+
+# 启动命令
+CMD ["python", "backend/app.py"] 

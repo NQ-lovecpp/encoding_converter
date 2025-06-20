@@ -1,232 +1,174 @@
-# 字符编码转换器 Pro
+# 字符编码转换器
 
-一个现代化的多页面字符编码转换应用，采用液态玻璃设计风格，提供丰富的编码转换、分析和学习功能。
+现代化的字符编码转换工具，支持多种编码格式的转换和可视化分析。
 
-## ✨ 主要特性
+## ✨ 特性
 
-### 🏠 首页 (index.html)
-- 现代化的液态玻璃设计主页
-- 功能导航和特性展示
-- 响应式布局和动画效果
-- 实时统计信息展示
+- 🎨 **Vue3现代化界面** - 使用最新技术栈构建的响应式界面
+- 🔧 **经典HTML界面** - 兼容性良好的传统界面
+- 📊 **可视化分析** - 编码数据的图表化展示
+- 🐳 **Docker部署** - 一键构建和部署
+- 🌐 **多端口服务** - 同时提供多个访问端口
+- ⚙️ **全局配置** - 统一的API地址管理
 
-### 🔄 转换器 (converter.html)
-- 多种字符编码格式支持
-- 实时文本转换和预览
-- 多种视图模式（字符、表格、原始数据）
-- 文件上传和批量处理
-- 结果导出和分享功能
-
-### 🎮 游乐场 (playground.html)
-- **编码挑战游戏** - 测试编码知识
-- **编码记忆游戏** - 记忆编码对应关系
-- **知识问答** - 编码相关知识测试
-- **速打游戏** - 快速输入编码练习
-- 游戏记录和成就系统
-
-### 📊 可视化分析 (visualizer.html)
-- 字节分布图表
-- 编码效率对比
-- 字符类型分析
-- 编码大小趋势
-- 详细的统计数据表格
-
-### 📚 历史记录 (history.html)
-- 转换历史管理
-- 分析记录追踪
-- 游戏成绩记录
-- 智能筛选和搜索
-- 数据导出功能
-
-## 🎨 设计特色
-
-### 液态玻璃效果
-- 半透明背景和毛玻璃效果
-- 优雅的渐变色彩
-- 流畅的动画过渡
-- 现代化的视觉体验
-
-### 响应式设计
-- 支持桌面、平板、手机设备
-- 自适应布局
-- 触摸友好的交互
-- 优化的移动端体验
-
-### 无障碍支持
-- 键盘导航支持
-- 屏幕阅读器兼容
-- 高对比度支持
-- 减少动画选项
-
-## 🛠 技术栈
-
-### 前端
-- **HTML5** - 语义化标记
-- **CSS3** - 现代样式和动画
-- **JavaScript (ES6+)** - 现代JS特性
-- **Chart.js** - 数据可视化
-- **Font Awesome** - 图标库
-
-### 后端
-- **Python Flask** - Web框架
-- **多编码支持** - UTF-8, UTF-16, GBK, ASCII等
-- **RESTful API** - 标准化接口
-
-## 📁 项目结构
+## 🏗️ 项目结构
 
 ```
 encoding_converter/
-├── backend/
-│   ├── app.py              # Flask应用主文件
-│   └── requirements.txt    # Python依赖
-├── frontend/
-│   ├── index.html          # 主页
-│   ├── converter.html      # 转换器页面
-│   ├── converter.js        # 转换器逻辑
-│   ├── playground.html     # 游乐场页面
-│   ├── playground.js       # 游戏逻辑
-│   ├── visualizer.html     # 可视化页面
-│   ├── visualizer.js       # 图表逻辑
-│   ├── history.html        # 历史记录页面
-│   ├── history.js          # 历史管理
-│   ├── styles/
-│   │   └── common.css      # 通用样式
-│   └── app.js              # 原始应用逻辑
-└── README.md               # 项目说明
+├── backend/                 # Flask后端API
+├── frontend/               # 经典HTML前端
+├── frontend-vue/          # Vue3现代化前端
+├── config.js              # 全局配置文件
+├── build.sh               # 构建脚本
+├── run.sh                 # 运行脚本
+├── Dockerfile.fast        # 快速构建Docker文件
+└── requirements.txt       # Python依赖
 ```
 
 ## 🚀 快速开始
 
-### 1. 安装依赖
+### 方法1: 一键运行（推荐）
 
 ```bash
-# 后端依赖
-cd backend
-pip install -r requirements.txt
+# 赋予执行权限
+chmod +x run.sh
+
+# 一键构建并运行
+./run.sh
 ```
 
-### 2. 启动后端服务
+### 方法2: 手动构建
 
 ```bash
-cd backend
-python app.py
+# 1. 构建项目
+chmod +x build.sh
+./build.sh
+
+# 2. 运行容器
+docker run -d \
+  --name encoding-converter \
+  -p 15000:15000 \
+  -p 15001:15001 \
+  -p 15002:15002 \
+  encoding-converter
 ```
 
-### 3. 打开前端应用
+## 🌐 访问地址
 
-在浏览器中打开 `frontend/index.html` 或通过Web服务器访问。
+构建完成后，可以通过以下地址访问：
 
-## 🎯 功能详解
+- **Vue现代化界面**: http://localhost:15001
+- **API + 原版HTML**: http://localhost:15000  
+- **纯原版HTML**: http://localhost:15002
 
-### 转换器功能
-- **多格式支持**: UTF-8, UTF-16, UTF-32, GBK, ASCII, ISO-8859-1等
-- **实时转换**: 输入即转换，无需等待
-- **多视图模式**: 
-  - 字符视图：逐字符展示编码结果
-  - 表格视图：结构化数据展示
-  - 原始视图：十六进制和字节数据
-- **批量处理**: 支持大量文本和文件上传
-- **结果导出**: JSON、CSV、TXT格式导出
+## ⚙️ 配置管理
 
-### 游戏功能
-- **编码挑战**: 
-  - 字符到编码的转换
-  - 编码到字符的逆向
-  - 计时和评分系统
-- **记忆游戏**: 
-  - 配对编码和字符
-  - 难度递增
-  - 记忆训练
-- **知识问答**: 
-  - 编码理论知识
-  - 历史背景
-  - 实际应用场景
-- **速打练习**: 
-  - 快速输入训练
-  - 准确率统计
-  - 进度追踪
+### 全局API配置
 
-### 可视化功能
-- **字节分布**: 不同编码的字节使用情况
-- **效率对比**: 编码效率雷达图
-- **字符分析**: 字符类型饼图
-- **趋势分析**: 编码大小变化趋势
-- **统计信息**: 详细的数值统计
+项目使用统一的配置文件 `config.js` 管理API地址：
 
-### 历史记录功能
-- **自动保存**: 所有操作自动记录
-- **智能分类**: 按类型和时间分类
-- **快速搜索**: 全文搜索和筛选
-- **数据统计**: 使用情况统计
-- **收藏功能**: 重要记录收藏
-
-## 🎨 设计理念
-
-### 用户体验
-- **直观易用**: 清晰的导航和操作流程
-- **即时反馈**: 实时的状态提示和结果展示
-- **个性化**: 主题切换和设置记忆
-- **性能优化**: 快速响应和流畅动画
-
-### 视觉设计
-- **液态玻璃**: 现代化的毛玻璃质感
-- **渐变色彩**: 丰富而不失和谐的配色
-- **动态效果**: 微妙而优雅的动画
-- **typography**: 清晰易读的字体设计
-
-## 🔧 自定义配置
-
-### 主题定制
-在CSS中修改CSS变量来自定义主题：
-
-```css
-:root {
-    --primary-gradient: your-gradient;
-    --glass-bg: your-background;
-    --text-primary: your-color;
+```javascript
+window.GLOBAL_CONFIG = {
+  API: {
+    DEVELOPMENT: 'http://localhost:15000/api',
+    PRODUCTION: 'http://117.72.15.209:15000/api',
+    CURRENT: 'http://117.72.15.209:15000/api'  // 当前使用的API地址
+  }
 }
 ```
 
-### API配置
-在JavaScript中修改API配置：
+### 修改API地址
 
-```javascript
-const CONFIG = {
-    API_BASE_URL: 'your-api-url',
-    MAX_TEXT_LENGTH: 10000,
-    DEFAULT_ENCODINGS: ['utf-8', 'utf-16']
-};
+#### 方法1: 直接修改配置文件
+编辑 `config.js` 中的 `CURRENT` 地址
+
+#### 方法2: 使用自动化脚本
+```bash
+# Windows
+.\update-api-config.ps1 "http://新地址:15000"
+
+# Linux/macOS
+./update-api-config.sh "http://新地址:15000"
 ```
 
-## 📱 移动端优化
+#### 方法3: 在浏览器控制台动态切换
+```javascript
+// 切换到开发环境
+window.useDevApi()
 
-- 触摸优化的按钮和交互
-- 自适应的字体大小
-- 简化的导航菜单
-- 优化的输入体验
+// 切换到生产环境  
+window.useProdApi()
 
-## 🌐 浏览器兼容性
+// 设置自定义地址
+window.setApiUrl('http://自定义地址:15000/api')
+```
 
-- Chrome 70+
-- Firefox 65+
-- Safari 12+
-- Edge 79+
+## 🛠️ 开发环境
 
-## 🤝 贡献指南
+### 本地开发Vue项目
 
-1. Fork 项目
-2. 创建功能分支
-3. 提交代码
-4. 发起 Pull Request
+```bash
+cd frontend-vue
+npm install
+npm run dev
+```
 
-## 📄 许可证
+### 本地运行后端API
 
-MIT License
+```bash
+cd backend
+pip install -r ../requirements.txt
+python app.py
+```
 
-## 👨‍💻 作者
+## 📦 Docker管理
 
-字符编码转换器 Pro 团队
+```bash
+# 查看容器状态
+docker ps
 
----
+# 查看日志
+docker logs encoding-converter
 
-**享受编码的乐趣！** ✨ 
+# 停止容器
+docker stop encoding-converter
+
+# 删除容器
+docker rm encoding-converter
+
+# 删除镜像
+docker rmi encoding-converter
+```
+
+## 🔧 技术栈
+
+### 前端
+- **Vue3** + **TypeScript** + **Vite**
+- **Element Plus** UI组件库
+- **Chart.js** 数据可视化
+- **Font Awesome** 图标库
+
+### 后端
+- **Flask** Web框架
+- **Python 3.11**
+- 多种字符编码支持
+
+### 部署
+- **Docker** 容器化部署
+- **Nginx** 静态文件服务
+- **多端口服务** 架构
+
+## 📈 性能优化
+
+- ✅ **预构建** - Vue项目在本地构建，减少Docker构建时间
+- ✅ **分层缓存** - Docker分层构建，提高构建效率
+- ✅ **静态文件分离** - 静态资源独立服务
+- ✅ **API缓存** - 合理的API响应缓存
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## �� 许可证
+
+MIT License 
