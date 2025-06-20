@@ -292,6 +292,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import NotificationSystem from '../components/NotificationSystem.vue'
+import { getApiBaseUrl } from '@/config/api'
 
 // 类型定义
 interface EncodingOption {
@@ -341,7 +342,7 @@ const fileInput = ref<HTMLInputElement>()
 
 // 配置
 const maxTextLength = 10000
-const apiBaseUrl = 'http://localhost:15000/api'
+const apiBaseUrl = getApiBaseUrl()
 
 // 计算属性
 const canConvert = computed(() => {

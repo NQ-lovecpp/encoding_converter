@@ -1,3 +1,8 @@
+// 配置 - 使用全局配置
+const CONFIG = window.APP_CONFIG || {
+    API_BASE_URL: 'http://117.72.15.209:15000/api'
+};
+
 // 图表实例存储
 let charts = {
     byteDistribution: null,
@@ -113,7 +118,7 @@ async function analyzeText() {
         showLoading(true);
         
         // 调用后端API进行分析
-        const response = await fetch('http://localhost:15000/api/convert', {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/convert`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

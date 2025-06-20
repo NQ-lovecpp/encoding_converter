@@ -1,6 +1,6 @@
-// 应用配置
-const CONFIG = {
-    API_BASE_URL: 'http://localhost:15000/api',
+// 应用配置 - 使用全局配置
+const CONFIG = window.APP_CONFIG || {
+    API_BASE_URL: 'http://117.72.15.209:15000/api',
     MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
     AUTO_CONVERT_DELAY: 500, // 500ms
     ANIMATION_DURATION: 300,

@@ -7,10 +7,11 @@ const appState = {
     isLoading: false
 };
 
-// 配置
-const CONFIG = {
-    API_BASE_URL: 'http://localhost:15000/api',
+// 配置常量 - 使用全局配置
+const CONFIG = window.APP_CONFIG || {
+    API_BASE_URL: 'http://117.72.15.209:15000/api',
     MAX_TEXT_LENGTH: 10000,
+    MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
     DEFAULT_ENCODINGS: ['utf-8', 'utf-16', 'gbk', 'ascii']
 };
 

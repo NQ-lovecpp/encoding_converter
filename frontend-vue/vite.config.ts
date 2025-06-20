@@ -12,7 +12,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:15000',
+        target: 'http://117.72.15.209:15000',
         changeOrigin: true,
         secure: false
       }
