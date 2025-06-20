@@ -12,23 +12,33 @@ from pathlib import Path
 import threading
 import time
 
+# 获取当前脚本的绝对路径
+current_dir = Path(__file__).parent.absolute()
+project_root = current_dir.parent
+frontend_dir = project_root / 'frontend'
+vue_dist_dir = project_root / 'frontend-vue' / 'dist'
+
+print(f"📁 项目根目录: {project_root}")
+print(f"📁 前端目录: {frontend_dir}")
+print(f"📁 Vue构建目录: {vue_dist_dir}")
+
 # 创建三个Flask应用
 # API服务器 (端口15000)
 api_app = Flask(__name__, 
-                template_folder='../frontend',
-                static_folder='../frontend',
+                template_folder=str(frontend_dir),
+                static_folder=str(frontend_dir),
                 static_url_path='')
 
 # Vue应用服务器 (端口15001)
 vue_app = Flask(__name__,
-                template_folder='../frontend-vue/dist',
-                static_folder='../frontend-vue/dist',
+                template_folder=str(vue_dist_dir),
+                static_folder=str(vue_dist_dir),
                 static_url_path='')
 
 # 原版HTML应用服务器 (端口15002)
 html_app = Flask(__name__,
-                 template_folder='../frontend',
-                 static_folder='../frontend',
+                 template_folder=str(frontend_dir),
+                 static_folder=str(frontend_dir),
                  static_url_path='')
 
 # 配置CORS
@@ -58,7 +68,7 @@ def index():
 def static_files(filename):
     """提供静态文件"""
     if filename.endswith(('.css', '.js', '.png', '.jpg', '.ico', '.svg')):
-        return send_from_directory('../frontend', filename)
+        return send_from_directory(str(frontend_dir), filename)
     return render_template('index.html')
 
 # API路由：获取支持的编码列表
@@ -324,17 +334,17 @@ def internal_error(error):
 @vue_app.route('/')
 def vue_index():
     """Vue应用主页"""
-    return send_file('../frontend-vue/dist/index.html')
+    return send_file(str(vue_dist_dir / 'index.html'))
 
 @vue_app.route('/<path:filename>')
 def vue_static_files(filename):
     """Vue应用静态文件"""
-    return send_from_directory('../frontend-vue/dist', filename)
+    return send_from_directory(str(vue_dist_dir), filename)
 
 @vue_app.errorhandler(404)
 def vue_not_found(error):
     """Vue应用404错误处理 - SPA路由"""
-    return send_file('../frontend-vue/dist/index.html')
+    return send_file(str(vue_dist_dir / 'index.html'))
 
 # ========================================
 # 原版HTML应用路由 (端口15002)
@@ -349,7 +359,7 @@ def html_index():
 def html_static_files(filename):
     """原版HTML应用静态文件"""
     if filename.endswith(('.css', '.js', '.png', '.jpg', '.ico', '.svg')):
-        return send_from_directory('../frontend', filename)
+        return send_from_directory(str(frontend_dir), filename)
     return render_template('index.html')
 
 @html_app.errorhandler(404)
