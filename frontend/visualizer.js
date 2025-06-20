@@ -113,7 +113,7 @@ async function analyzeText() {
         showLoading(true);
         
         // 调用后端API进行分析
-        const response = await fetch('http://localhost:5000/api/convert', {
+        const response = await fetch('http://localhost:15000/api/convert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

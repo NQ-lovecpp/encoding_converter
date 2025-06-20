@@ -9,7 +9,7 @@ const appState = {
 
 // 配置
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:5000/api',
+    API_BASE_URL: 'http://localhost:15000/api',
     MAX_TEXT_LENGTH: 10000,
     DEFAULT_ENCODINGS: ['utf-8', 'utf-16', 'gbk', 'ascii']
 };

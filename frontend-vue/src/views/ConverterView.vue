@@ -341,7 +341,7 @@ const fileInput = ref<HTMLInputElement>()
 
 // 配置
 const maxTextLength = 10000
-const apiBaseUrl = 'http://localhost:5000/api'
+const apiBaseUrl = 'http://localhost:15000/api'
 
 // 计算属性
 const canConvert = computed(() => {
