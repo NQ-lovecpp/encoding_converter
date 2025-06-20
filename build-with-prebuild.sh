@@ -66,17 +66,34 @@ cd ..
 # 构建Docker镜像
 echo ""
 echo "🐳 构建Docker镜像..."
-if docker build -f Dockerfile.simple -t encoding-converter-pro .; then
+
+# 设置Docker构建参数，增加网络超时配置
+export DOCKER_BUILDKIT=1
+export BUILDKIT_PROGRESS=plain
+
+# 使用简化版Dockerfile构建，增加网络配置
+if docker build \
+    --network=host \
+    --build-arg BUILDKIT_INLINE_CACHE=1 \
+    --build-arg PIP_DEFAULT_TIMEOUT=300 \
+    --build-arg PIP_RETRIES=10 \
+    -f Dockerfile.simple \
+    -t encoding-converter-simple:latest \
+    . ; then
     echo "✅ Docker镜像构建成功!"
     echo ""
-    echo "🎉 可以运行以下命令启动:"
-    echo "   docker run -d --name encoding-converter -p 15000:15000 -p 15001:15001 -p 15002:15002 encoding-converter-pro"
+    echo "🎉 构建完成! 您可以使用以下命令启动:"
+    echo "   docker run -d -p 15000:15000 -p 15001:15001 -p 15002:15002 --name encoding-converter encoding-converter-simple:latest"
     echo ""
-    echo "🌐 服务访问地址:"
-    echo "   - API服务:    http://localhost:15000"
-    echo "   - Vue应用:   http://localhost:15001"
-    echo "   - 原版HTML:  http://localhost:15002"
+    echo "📊 镜像信息:"
+    docker images | grep encoding-converter-simple | head -1
 else
     echo "❌ Docker镜像构建失败!"
+    echo ""
+    echo "🔧 故障排除建议:"
+    echo "1. 检查网络连接是否正常"
+    echo "2. 尝试使用代理或镜像源"
+    echo "3. 重新运行构建命令"
+    echo "4. 检查 requirements.txt 是否有冲突的依赖"
     exit 1
 fi 
