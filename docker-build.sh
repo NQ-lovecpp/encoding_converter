@@ -28,6 +28,12 @@ echo "   - Dockerfile: $([ -f Dockerfile ] && echo '✅ 存在' || echo '❌ 缺
 echo "   - docker-compose.yml: $([ -f docker-compose.yml ] && echo '✅ 存在' || echo '❌ 缺失')"
 echo "   - frontend-vue/package.json: $([ -f frontend-vue/package.json ] && echo '✅ 存在' || echo '❌ 缺失')"
 
+# 验证Vue项目配置
+echo ""
+echo "🔍 验证Vue项目配置:"
+echo "   - Vue index.html脚本路径:"
+grep "main.ts" frontend-vue/index.html 2>/dev/null || echo "   ❌ 未找到main.ts引用"
+
 echo ""
 echo "🔧 开始构建Docker镜像..."
 echo "这可能需要几分钟时间，请耐心等待..."
@@ -57,5 +63,6 @@ else
     echo "2. 确保有足够的磁盘空间"
     echo "3. 查看详细错误信息"
     echo "4. 尝试: docker system prune -a"
+    echo "5. 运行本地Vue构建测试: chmod +x quick-build-test.sh && ./quick-build-test.sh"
     exit 1
 fi 
